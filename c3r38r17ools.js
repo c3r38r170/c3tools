@@ -169,6 +169,7 @@ function createNode(element,options,onlyChild){
 	return element;
 }
 
+//TODO add some checking for parent, see if returning something else is better
 function addNode(parent,...children){
 	let results=[];
 	for(let child of children)
