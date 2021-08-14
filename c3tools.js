@@ -99,46 +99,47 @@ function SqS(selector,{n=ONLY_ONE,from=D}={}){
 	if(selector instanceof Node)//??? Node vs HTMLElement
 		return selector;
 	if(is(selector,Types.STRING)){
-		let resultados, restoDeSelector=selector.slice(1);
-		if(/[ :\[\.#,+~]/.test(restoDeSelector))
+		let results, restOfSelector=selector.slice(1);
+		if(/[ :\[\.#,+~]/.test(restOfSelector))
 			if(!n||n===1)
 				return from.querySelector(selector)
 			else if(n===true)
 				return from.querySelectorAll(selector);
-			else resultados=from.querySelectorAll(selector);
+			else results=from.querySelectorAll(selector);
 		else switch(selector[0]){
 		case '#':
 			// TODO reconsider
-			let resultado = D.getElementById(restoDeSelector);
-			return resultado.closest(selector)
-				?resultado
+			let result = D.getElementById(restOfSelector);
+			return result.closest(selector)
+				?result
 				:false;
 		case '.':
-			resultados=from.getElementsByClassName(restoDeSelector);
+			results=from.getElementsByClassName(restOfSelector);
 			break;
 		case '[':
 			let nameMatch=/^\[name="([^"]*)"\]$/.exec(selector);
 			if(nameMatch)
-				resultados=D.getElementsByName(nameMatch[1]);
+				results=D.getElementsByName(nameMatch[1]);
 			break;
 		case ':':
 			break;
 		default:
-			resultados=from.getElementsByTagName(selector);
+			results=from.getElementsByTagName(selector);
 		}
 		if(!n||n===1)
-			return resultados?resultados[0]:D.querySelector(selector);
+			return results?results[0]:D.querySelector(selector);
 		else if(n===true)
-			return resultados?resultados:D.querySelectorAll(selector);
+			return results?results:D.querySelectorAll(selector);
 		else{
-			if(!resultados)
-				resultados=D.querySelectorAll(selector);
-			if(n>=resultados.length)
-				return resultados;
-			let respuesta=[];
+			if(!results)
+				results=D.querySelectorAll(selector);
+			if(n>=results.length)
+				return results;
+			// Can't use slice because it's a NodeList.
+			let response=[];
 			for(let i=0;i<n;i++)
-				respuesta.push(resultados[i]);
-			return respuesta;
+				response.push(results[i]);
+			return response;
 		}
 	}else return false;
 }
