@@ -1,0 +1,29 @@
+{
+  "name": "c3tools",
+  "version": "1.0.0-alpha.0",
+  "description": "Collection of personal sets of functions to speed up web development.",
+  "main": "c3tools-min.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/c3r38r170/c3tools.git"
+  },
+  "keywords": [
+    "web-development",
+    "post",
+    "json",
+    "custom",
+    "wrapper",
+    "dom",
+    "custom-element",
+    "personal"
+  ],
+  "author": "c3r38r170",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/c3r38r170/c3tools/issues"
+  },
+  "homepage": "https://github.com/c3r38r170/c3tools#readme"
+}

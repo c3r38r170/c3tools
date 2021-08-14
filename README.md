@@ -2,8 +2,6 @@
 Collection of personal sets of functions to speed up web development.
 
 ## TO DO
-- Add version number.
-- ~~Get a CDN.~~ Publish to NPM.
 - Translate SqS completely.
 - Try to get rid of `// TODO`s.
 - Document functions here (with **examples**).
