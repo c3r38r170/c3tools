@@ -1,11 +1,27 @@
-# c3r38r17ools
+# c3tools
 Collection of personal sets of functions to speed up web development.
 
 ## TO DO
-- Finish TO DO list
 - Debug new changes introduced.
-- Add version number
-- Get a CDN.
+- Change SqS's cantidad parameter.
+- Add version number.
 - Minified version.
-- Add JSDocs
-- Document functions here.
+- ~~Get a CDN.~~ Publish to NPM.
+- Translate SqS completely.
+- Try to get rid of `// TODO`s.
+- Document functions here (with **examples**).
+- The "Soon!" stuff.
+
+## Soon!
+`download` function.
+<br>
+Modal messages with premises.
+<br>
+Easy way to add functions to the 'DOMContentLoaded' event.
+<br>
+Module version.
+<br>
+Reacting to DOM changes.
+
+---
+Any suggestion or feedback is welcome.
