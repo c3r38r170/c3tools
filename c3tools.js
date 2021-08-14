@@ -90,23 +90,22 @@ const gEt=id=>D.getElementById(id);
  * Wrapper for querySelector, querySelectorAll, and any other DOM query methods.
  * @param {string} selector - CSS selector to look for.
  * @param {object} [obj]={} - Wrapper
- * @param {(number|boolean)} [obj.cantidad]=ONLY_ONE - Ammount of Nodes to return, defaults to false (ONLY_ONE).
- * @param {HTMLElement} [obj.ancestroComun]=D - DOM element on which the query will be done.
+ * @param {(number|boolean)} [obj.n]=ONLY_ONE - Ammount of elements to return, defaults to false (ONLY_ONE).
+ * @param {HTMLElement} [obj.from]=D - DOM element on which the query will be done.
  * @returns {(HTMLElement|NodeList|boolean)} The element or false if cantidad was 1 or false, a NodeList if cantidad was more than 1 or true.
  */
 // TODO translate
-// TODO cambiar cantidad por n
-function SqS(selector,{cantidad=ONLY_ONE,ancestroComun=D}={}){
+function SqS(selector,{n=ONLY_ONE,from=D}={}){
 	if(selector instanceof Node)//??? Node vs HTMLElement
 		return selector;
 	if(is(selector,Types.STRING)){
 		let resultados, restoDeSelector=selector.slice(1);
 		if(/[ :\[\.#,+~]/.test(restoDeSelector))
-			if(!cantidad||cantidad===1)
-				return ancestroComun.querySelector(selector)
-			else if(cantidad===true)
-				return ancestroComun.querySelectorAll(selector);
-			else resultados=ancestroComun.querySelectorAll(selector);
+			if(!n||n===1)
+				return from.querySelector(selector)
+			else if(n===true)
+				return from.querySelectorAll(selector);
+			else resultados=from.querySelectorAll(selector);
 		else switch(selector[0]){
 		case '#':
 			// TODO reconsider
@@ -115,7 +114,7 @@ function SqS(selector,{cantidad=ONLY_ONE,ancestroComun=D}={}){
 				?resultado
 				:false;
 		case '.':
-			resultados=ancestroComun.getElementsByClassName(restoDeSelector);
+			resultados=from.getElementsByClassName(restoDeSelector);
 			break;
 		case '[':
 			let nameMatch=/^\[name="([^"]*)"\]$/.exec(selector);
@@ -125,19 +124,19 @@ function SqS(selector,{cantidad=ONLY_ONE,ancestroComun=D}={}){
 		case ':':
 			break;
 		default:
-			resultados=ancestroComun.getElementsByTagName(selector);
+			resultados=from.getElementsByTagName(selector);
 		}
-		if(!cantidad||cantidad===1)
+		if(!n||n===1)
 			return resultados?resultados[0]:D.querySelector(selector);
-		else if(cantidad===true)
+		else if(n===true)
 			return resultados?resultados:D.querySelectorAll(selector);
 		else{
 			if(!resultados)
 				resultados=D.querySelectorAll(selector);
-			if(cantidad>=resultados.length)
+			if(n>=resultados.length)
 				return resultados;
 			let respuesta=[];
-			for(let i=0;i<cantidad;i++)
+			for(let i=0;i<n;i++)
 				respuesta.push(resultados[i]);
 			return respuesta;
 		}

@@ -2,10 +2,7 @@
 Collection of personal sets of functions to speed up web development.
 
 ## TO DO
-- Debug new changes introduced.
-- Change SqS's cantidad parameter.
 - Add version number.
-- Minified version.
 - ~~Get a CDN.~~ Publish to NPM.
 - Translate SqS completely.
 - Try to get rid of `// TODO`s.
