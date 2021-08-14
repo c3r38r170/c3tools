@@ -93,8 +93,8 @@ const gEt=id=>D.getElementById(id);
  * @param {(number|boolean)} [obj.n]=ONLY_ONE - Ammount of elements to return, defaults to false (ONLY_ONE).
  * @param {HTMLElement} [obj.from]=D - DOM element on which the query will be done.
  * @returns {(HTMLElement|NodeList|boolean)} The element or false if cantidad was 1 or false, a NodeList if cantidad was more than 1 or true.
+ * @throws {Error} If the selector is not a string.
  */
-// TODO translate
 function SqS(selector,{n=ONLY_ONE,from=D}={}){
 	if(selector instanceof Node)//??? Node vs HTMLElement
 		return selector;
@@ -108,11 +108,7 @@ function SqS(selector,{n=ONLY_ONE,from=D}={}){
 			else results=from.querySelectorAll(selector);
 		else switch(selector[0]){
 		case '#':
-			// TODO reconsider
-			let result = D.getElementById(restOfSelector);
-			return result.closest(selector)
-				?result
-				:false;
+			return D.getElementById(restOfSelector);
 		case '.':
 			results=from.getElementsByClassName(restOfSelector);
 			break;
@@ -141,7 +137,7 @@ function SqS(selector,{n=ONLY_ONE,from=D}={}){
 				response.push(results[i]);
 			return response;
 		}
-	}else return false;
+	}else throw new Error("The selector must be a string.");
 }
 
 /**
@@ -183,11 +179,11 @@ function last(array){
  * @param {(CustomElementRepresentation|object)} [options] - Represents the properties to be added to the element. Can also be used to pass an only child, for nesting. Some special values: children; an array of children representations (Existing Elements, arrays of parameters for createElement, even a string of the node name.). class; a single class name as a string. Not incompatible with classList. classList; an array of classes names. finalFun; a function that will be called at the end and has the resulting element as the context. on{event}; can be passed a function (not an arrow one) or a string of the body of the function or the name of the function (looked for in Window).
  * @param {HTMLElement} [onlyChild] - If only 1 child will be added, then this parameter is for you. This comes handy in nesting.
  * @returns {HTMLElement} The resulting element.
+ * @throws {Error} If the element is falsey. It must be there, whatever its value.
  */
 function createElement(element,options,onlyChild){
-	// let {props,children,finalFun,}=options;
 	if(!element)
-		return;
+		throw new Error("Element is required.");
 	
 	let finalFun;
 	
@@ -196,7 +192,7 @@ function createElement(element,options,onlyChild){
 	if(is(element,Types.STRING))
 		if(element=element.trim())
 			element=D.createElement(element.toUpperCase());
-		else return;
+		else throw new Error("Element is required.");
 	
 	if(options && (options.nodeType || !is(options,Types.OBJECT))){
 		onlyChild=options;
@@ -227,7 +223,8 @@ function createElement(element,options,onlyChild){
 					if(value.match('[^a-zA-Z0-9_]'))
 						element[key]=new Function(value);
 					else element[key]=W[value];
-				else if(key.substring(0,2)!='on' && element[key]==undefined)//this is null too right?  probar algun dia, hacer test set 	//TODO do please
+				// I can't think of enough cases to prove == and === behave differently here. So watch out.
+				else if(key.substring(0,2)!='on' && element[key]===undefined)
 					element.setAttribute(key,value);
 				else if(is(value,Types.OBJECT)) //style, dataset
 					Object.assign(element[key],value);
@@ -249,9 +246,12 @@ function createElement(element,options,onlyChild){
  * @param {HTMLElement} parent - The element where all children will be appended.
  * @param  {...CustomElementRepresentation} children - The structures of the children that will be created and appended.
  * @returns {(HTMLElement|HTMLElement[])} The only child added if there's one or an array of all the children added.
+ * @throws When parent is not a HTMLElement.
  */
 function addElement(parent,...children){
-	//TODO add some checking for parent, see if returning something else is better
+	if(!parent instanceof HTMLElement)
+		throw new Error('Parent must be an HTMLElement.');
+
 	let results=[];
 	for(let child of children)
 		if(child)
@@ -300,10 +300,11 @@ function* JSONAsURLEncodedStringIterator(obj,prefix=null){
  * Turns a regular object into a FormData object.
  * @param {(Array|object)} obj - Original object.
  * @returns {FormData} The data as a FormData.
+ * @throws {Error} If obj is not valid.
  */
 function JSONAsFormData(obj){
 	if(!(is(obj,Types.ARRAY) || is(obj,Types.OBJECT)))
-		return;
+		throw new Error("\"obj\" must be an array or object.");
 	
 	let fd=new FormData;
 	for(let key in obj){

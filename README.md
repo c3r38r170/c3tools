@@ -2,7 +2,6 @@
 Collection of personal sets of functions to speed up web development.
 
 ## TO DO
-- Try to get rid of `// TODO`s.
 - Document functions here (with **examples**).
 - The "Soon!" stuff.
 
