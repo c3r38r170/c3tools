@@ -1,5 +1,5 @@
 {
-  "name": "c3tools",
+  "name": "@c3r38r170/c3tools",
   "version": "1.0.0-alpha.0",
   "description": "Collection of personal sets of functions to speed up web development.",
   "main": "c3tools-min.js",
