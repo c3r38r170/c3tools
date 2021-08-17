@@ -1,9 +1,5 @@
-//Utilities
+//Type checking
 
-const W=window,D=document
-	,ALL=true,ONLY_ONE=false;
-/** @const {HTMLBodyElement} */
-var B;
 /**
  * Enum for types of variables.
  * @readonly
@@ -19,10 +15,6 @@ var Types={
 	,NULL:5
 };
 
-addEventListener('DOMContentLoaded',()=>{
-	B=D.body;
-});
-
 /**
  * Checks if the variable is of certain type
  * @param {*} variable - Variable to check type.
@@ -32,19 +24,19 @@ addEventListener('DOMContentLoaded',()=>{
 function is(variable,type){
 	if(variable==null && type==Types.NULL)
 		return true;
-	let types={
+	let typesWithTypeofAndClass={
 		[Types.NUMBER]:['number',Number]
 		,[Types.STRING]:['string',String]
 		,[Types.BOOLEAN]:['boolean',Boolean]
 	}
 	switch(type){
-		case 0:
-		case 1:
-		case 4:
-			return types[type][0]==typeof variable || variable instanceof types[type][1];
-		case 2:
+		case Types.NUMBER:
+		case Types.STRING:
+		case Types.BOOLEAN:
+			return typesWithTypeofAndClass[type][0]==typeof variable || variable instanceof typesWithTypeofAndClass[type][1];
+		case Types.ARRAY:
 			return Array.isArray(variable);
-		case 3:
+		case Types.OBJECT:
 			return 'object'==typeof variable && !Array.isArray(variable);
 	}
 	return type==Types.OTHER;
@@ -79,6 +71,16 @@ function whatIs(variable){
 	}
 }
 
+//DOM querying
+
+const W=window,D=document
+	,ALL=true,ONLY_ONE=false;
+/** @const {HTMLBodyElement} */
+var B;
+addEventListener('DOMContentLoaded',()=>{
+	B=D.body;
+});
+
 /**
  * Wrapper for getElementById.
  * @param {string} id - id to search for.
@@ -92,19 +94,22 @@ const gEt=id=>D.getElementById(id);
  * @param {object} [obj]={} - Wrapper
  * @param {(number|boolean)} [obj.n]=ONLY_ONE - Ammount of elements to return, defaults to false (ONLY_ONE).
  * @param {HTMLElement} [obj.from]=D - DOM element on which the query will be done.
- * @returns {(HTMLElement|NodeList|boolean)} The element or false if cantidad was 1 or false, a NodeList if cantidad was more than 1 or true.
+ * @returns {(HTMLElement[]|HTMLElement)} The element or false if cantidad was 1 or false, a NodeList if cantidad was more than 1 or true.
  * @throws {Error} If the selector is not a string.
  */
 function SqS(selector,{n=ONLY_ONE,from=D}={}){
 	if(selector instanceof Node)//??? Node vs HTMLElement
 		return selector;
+	if(!n)
+		n=1;
+
 	if(is(selector,Types.STRING)){
 		let results, restOfSelector=selector.slice(1);
 		if(/[ :\[\.#,+~]/.test(restOfSelector))
-			if(!n||n===1)
-				return from.querySelector(selector)
+			if(n===1)
+				return from.querySelector(selector);
 			else if(n===true)
-				return from.querySelectorAll(selector);
+				return [...from.querySelectorAll(selector)];
 			else results=from.querySelectorAll(selector);
 		else switch(selector[0]){
 		case '#':
@@ -122,38 +127,22 @@ function SqS(selector,{n=ONLY_ONE,from=D}={}){
 		default:
 			results=from.getElementsByTagName(selector);
 		}
-		if(!n||n===1)
-			return results?results[0]:D.querySelector(selector);
-		else if(n===true)
-			return results?results:D.querySelectorAll(selector);
-		else{
-			if(!results)
-				results=D.querySelectorAll(selector);
-			if(n>=results.length)
-				return results;
-			// Can't use slice because it's a NodeList.
-			let response=[];
-			for(let i=0;i<n;i++)
-				response.push(results[i]);
-			return response;
+		if(n===1)
+			return results?results[0]:from.querySelector(selector);
+		else {
+			let response=[...results||from.querySelectorAll(selector)];
+			return n===true?
+				response
+				:response.slice(0,n);
 		}
-	}else throw new Error("The selector must be a string.");
+	}else throw new Error('The selector must be a string.');
 }
+
+//DOM elements generators
 
 /**
- * Returns the last element of the array. Will soon be deprecated by Array.prototype.at
- * @param {Array} array - The array to use.
- * @throws Error if array is not an Array.
- * @returns {*} The last element of the array.
+ * @typedef {(string|[(string|HTMLElement),CustomElementRepresentationProperties])|HTMLElement} CustomElementRepresentation Either a string (the name of the element) or an array with the name of the element and an object containing the properties the element will have.
  */
-//TODO deprecate in 2023, 2 years after Array.prototype.at was implemented in major browsers
-function last(array){
-	if(!is(array,Types.ARRAY))
-		throw new Error('Tried to get last of something not an array.');
-	return array[array.length-1];
-}
-
-//Nodes
 
 /**
  * An object with the properties that will be applied to the element. It has some special properties that will be handled differently, the rest will just be set through direct property access or the setAttribute method.
@@ -166,10 +155,6 @@ function last(array){
  * @property {(Function|string)} [onevent] - A function or a string representing the name of a global function or a function body that will be added as a property (element.onevent=function).
  * @property {object} [dataset] - An object representing the data- attributes of the element as accessed through JavaScript.
  * @property {object} [style] - An object representing the inline CSS style of the element as accessed through JavaScript.
- */
-
-/**
- * @typedef {(string|HTMLElement|[(string|HTMLElement),CustomElementRepresentationProperties])} CustomElementRepresentation Either a string (the name of the element) or an array with the name of the element and an object containing the properties the element will have.
  */
 
 /**
@@ -259,7 +244,7 @@ function addElement(parent,...children){
 	return results.length>1?results:results[0];
 }
 
-//fetching
+//Fetching
 
 /**
  * Sends JSON as POST request.
