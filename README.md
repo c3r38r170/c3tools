@@ -13,9 +13,11 @@ Specifying a version is recommended. [More info about unpkg.](https://unpkg.com/
 ## Soon!
 `download` function.
 
-Modal messages with premises.
-
 Easy way to add functions to the 'DOMContentLoaded' event.
+
+Create .js.map files.
+
+Modal messages with premises.
 
 Module version.
 
