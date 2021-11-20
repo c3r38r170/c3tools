@@ -141,7 +141,11 @@ function SqS(selector,{n=ONLY_ONE,from=D}={}){
 //DOM elements generators
 
 /**
- * @typedef {(string|[(string|HTMLElement),ElementRepresentationProperties])|HTMLElement} ElementRepresentation Either a string (the name of the element) or an array with the name of the element and an object containing the properties the element will have.
+ * @typedef {(string|HTMLElement|DocumentFragment)} SimpleElementRepresentation The element representation values that aren't an array.
+ */
+
+/**
+ * @typedef {(SimpleElementRepresentation|[SimpleElementRepresentation,(ElementRepresentationProperties|ElementRepresentation),ElementRepresentation])} ElementRepresentation Either a string (the name of the element) or an array with the name of the element and an object containing the properties the element will have.
  */
 
 /**
@@ -151,7 +155,7 @@ function SqS(selector,{n=ONLY_ONE,from=D}={}){
  * @property {string} [class] - A CSS class.
  * @property {string[]} [classList] - A list of CSS classes.
  * @property {Function} [finalFun] - A function that will be called when the element is created with it as the context.
- * @property {ElementRepresentation[]} [children] - A list of elements representations that will be created and appended.
+ * @property {ElementRepresentation[]} [children] - A list of elements representations that will be created and appended. MUST be an array or other iterable.
  * @property {(Function|string)} [onevent] - A function or a string representing the name of a global function or a function body that will be added as a property (element.onevent=function).
  * @property {object} [dataset] - An object representing the data- attributes of the element as accessed through JavaScript.
  * @property {object} [style] - An object representing the inline CSS style of the element as accessed through JavaScript.
@@ -159,10 +163,10 @@ function SqS(selector,{n=ONLY_ONE,from=D}={}){
 
 /**
  * Creates Elements from a representation.
- * This function is not supposed to be used alone, but with nested elements inside addElement parameters.
- * @param {(ElementRepresentation|[ElementRepresentationProperties,(ElementRepresentation|object),HTMLElement])} element - A representation of the starting element, can be the name or an existing element. Can also be an array of the 3 parameters, for nesting.
- * @param {(ElementRepresentation|object)} [options] - Represents the properties to be added to the element. Can also be used to pass an only child, for nesting. Some special values: children; an array of children representations (Existing Elements, arrays of parameters for createElement, even a string of the node name.). class; a single class name as a string. Not incompatible with classList. classList; an array of classes names. finalFun; a function that will be called at the end and has the resulting element as the context. on{event}; can be passed a function (not an arrow one) or a string of the body of the function or the name of the function (looked for in Window).
- * @param {HTMLElement} [onlyChild] - If only 1 child will be added, then this parameter is for you. This comes handy in nesting.
+ * This function is not supposed to be used alone, but with nested elements inside addElement parameters. However, it comes handy every so often.
+ * @param {ElementRepresentation} element - A representation of the starting element, can be the name or an existing element. Can also be an array of the 3 parameters, for nesting.
+ * @param {(ElementRepresentationProperties|ElementRepresentation)} [options] - Represents the properties to be added to the element. Can also be used to pass an only child, for nesting. Some special values: children; an array of children representations (Existing Elements, arrays of parameters for createElement, even a string of the node name.). class; a single class name as a string. Not incompatible with classList. classList; an array of classes names. finalFun; a function that will be called at the end and has the resulting element as the context. on{event}; can be passed a function (not an arrow one) or a string of the body of the function or the name of the function (looked for in Window).
+ * @param {ElementRepresentation} [onlyChild] - If only 1 child will be added, then this parameter is for you. This comes handy in nesting.
  * @returns {HTMLElement} The resulting element.
  * @throws {Error} If the element is falsey. It must be there, whatever its value.
  */
@@ -184,7 +188,7 @@ function createElement(element,options,onlyChild){
 		options=null;
 	}
 	
-	let value;
+	let value,childrenHolder;
 	if(options)
 		for(let key in options){
 			value=options[key];
@@ -201,7 +205,8 @@ function createElement(element,options,onlyChild){
 				finalFun=value;
 				break;
 			case 'children':
-				addElement(element,...value);
+				childrenHolder=D.createDocumentFragment();
+				addElement(childrenHolder,...value);
 				break;
 			default:
 				if(key.substring(0,2)=='on' && is(value,Types.STRING))
@@ -219,8 +224,16 @@ function createElement(element,options,onlyChild){
 			// if(key=='innerHTML')
 			// 	processJSinHTML(value);
 		}
-	if(onlyChild)
-		element.appendChild(onlyChild.nodeType?onlyChild:createElement(onlyChild));
+	
+	if(onlyChild){
+		if(!childrenHolder)
+			childrenHolder=D.createDocumentFragment();
+		childrenHolder.appendChild(onlyChild.nodeType?onlyChild:createElement(onlyChild));
+	}
+
+	if(childrenHolder)
+		element.appendChild(childrenHolder);
+
 	if(finalFun)
 		(typeof finalFun=='string'?new Function(finalFun):finalFun).call(element);
 	return element;
