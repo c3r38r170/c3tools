@@ -280,7 +280,7 @@ function sendJSON(url,JSONdata,otherOptions=null){
  * A recursive iterator that turns a JSON object into URL string key-value pairs.
  * @param {object} obj - The object to parse.
  * @param {string} prefix - The path to this object.
- * @yields {[string, string]} Key-value pair.
+ * @yields {[string, (string|boolean|number)]} Key-value pair.
  */
 function* JSONAsURLEncodedStringIterator(obj,prefix=null){
 	let pairs=Array.isArray(obj)?
@@ -348,6 +348,7 @@ function sendPOST(url,data,{returnType,otherOptions}={}){
  * @param  {...*} rest - More parameters to pass to the fetch function.
  * @returns {Promise} The promise returned from the fetch call.
  */
-function fetchConCredentials(url,options,...rest){
-	return fetch(url,Object.assign({credentials:'include'},options),...rest);
+function fetchConCredentials(url,options={},...rest){
+	options.credentials='include';
+	return fetch(url,options,...rest);
 }
