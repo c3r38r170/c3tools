@@ -319,11 +319,11 @@ function JSONAsFormData(obj){
  * Sends JSON as FormData. This differs from sendJSON in that this can send files.
  * @param {string} url - The URL where to send the data
  * @param {(object|FormData)} data - The data to be sent.
- * @param {string} [returnType=null] - If provided, the Promise returned will not be the one returned by the fetch call, but the function of this name on the response. Example values: "json", "text"
- * @param {object} [otherOptions=null] - Other fetch options that should be applied.
+ * @param {string} [returnType=undefined] - If provided, the Promise returned will not be the one returned by the fetch call, but the function of this name on the response. Example values: "json", "text"
+ * @param {object} [otherOptions=undefined] - Other fetch options that should be applied.
  * @return {Promise} The Promise of the fetch request or its response.
  */
-function sendPOST(url,data,{returnType=null,otherOptions=null}={}){
+function sendPOST(url,data,{returnType,otherOptions}={}){
 	if(!(data instanceof FormData))
 		data=JSONAsFormData(data);
 	
