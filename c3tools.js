@@ -154,7 +154,7 @@ function SqS(selector,{n=ONLY_ONE,from=D}={}){
  * @type {object}
  * @property {string} [class] - A CSS class.
  * @property {string[]} [classList] - A list of CSS classes.
- * @property {Function} [finalFun] - A function that will be called when the element is created with it as the context.
+ * @property {(Function|string)} [finalFun] - A function that will be called when the element is created with it as the context.
  * @property {ElementRepresentation[]} [children] - A list of elements representations that will be created and appended. MUST be an array or other iterable.
  * @property {(Function|string)} [onevent] - A function or a string representing the name of a global function or a function body that will be added as a property (element.onevent=function).
  * @property {object} [dataset] - An object representing the data- attributes of the element as accessed through JavaScript.
