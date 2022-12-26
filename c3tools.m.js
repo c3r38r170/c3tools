@@ -85,10 +85,8 @@ const W=window;
 /** @const {Document} */
 const D=document;
 /** @const {HTMLBodyElement} */
-var B;
-addEventListener('DOMContentLoaded',()=>{
-	B=D.body;
-});
+// * Modules load before DOMContentLoaded is fired.
+const B=D.body;
 
 // TODO cambiar a Math.Infinity y 1
 const ALL=true;
