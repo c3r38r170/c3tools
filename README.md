@@ -33,18 +33,18 @@ SqS('#id span, #id b',{n:true}); // Actually uses querySelectorAll. Returns all 
 
 ```js
 createElement('DIV',{
-	children:[
-		['H2',{
-			innerText:'Fito Paez'
-		}]
-		,['P',{
-			innerText:'Él fue un gran cantautor'
-		}]
-	]
-	,class:'cantante'
-	,dataset:{
-		value:2
-	}
+  children:[
+    ['H2',{
+      innerText:'Fito Paez'
+    }]
+    ,['P',{
+      innerText:'Él fue un gran cantautor'
+    }]
+  ]
+  ,class:'cantante'
+  ,dataset:{
+    value:2
+  }
 });
 ```
 
@@ -53,11 +53,11 @@ createElement('DIV',{
 
 ```html
 <div
-	class="cantante"
-	data-value="2"
+  class="cantante"
+  data-value="2"
 >
-	<h2>Fito Paez</h2>
-	<p>Él fue un gran cantautor</p>
+  <h2>Fito Paez</h2>
+  <p>Él fue un gran cantautor</p>
 </div>
 ```
 
