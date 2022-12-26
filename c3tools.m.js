@@ -271,20 +271,42 @@ function addElement(parent,...children){
 //Fetching
 
 /**
- * Sends JSON as POST request.
- * @param {string} url - The target URL.
- * @param {JavaScriptObject} JSONdata - The request payload.
- * @param {JavaScriptObject} [otherOptions=null] - Options for the fetch operation.
- * @returns {Promise} The resulting Promise from the fetch operation.
+ * A simple, not compound value.
+ * @typedef {(string|number|boolean)} Scalar
  */
-function sendJSON(url,JSONdata,otherOptions=null){
-	let defaultOptions={
-		credentials:'include'
-		,method:'POST'
-		,headers:{'Content-Type':'application/json'}
-		,body:JSON.stringify(JSONdata)
-	};
-	return fetch(url,otherOptions?Object.assign(defaultOptions,otherOptions):defaultOptions);
+
+/**
+ * Cool wrapper around fetch.
+ * @param {string} url - The target URL.
+ * @param {(JavaScriptObject|FormData|Scalar)} [data] - The request payload. The request Content-Type will be application/json for an object, application/x-www-form-urlencoded for a FormData, and text/plain in any other case.
+ * @param {Object} [options={}] - Options for the fetch operation.
+ * @param {string} [options.method=GET] - HTTP verb for the request.
+ * @param {string} [options.format] - Name of a Request instance method. E.g.: 'json', 'text'. See https://developer.mozilla.org/en-US/docs/Web/API/Response#instance_methods
+ * @param {string} [options.credentials=include] - Value for fetch's options.credentials parameter.
+ * @returns {Promise} The resulting Promise from the fetch operation, or from the specified method of its Response.
+ */
+function superFetch(url,data,{method='GET',format,credentials='include'}={}){
+	let options={credentials};
+
+	if(method=='GET'){
+		if(data)
+			url+=[...JSONAsURLEncodedStringIterator(data)].reduce((acc,el)=>acc+=el.join('=')+'&','?');
+	}else{
+		options.method=method;
+		if(whatIs(data)==Types.OBJECT){
+			if(data instanceof FormData){
+				options.body=data;
+			}else{
+				options.headers['Content-Type']='application/json';
+				options.body=JSON.stringify(data);
+			}
+		}else if(data)
+			options.body=data;
+	}
+
+	return format?
+		(fetch(url,options).then(res=>res[format]()))
+		:fetch(url,options);
 }
 
 /**
@@ -326,15 +348,18 @@ function JSONAsFormData(obj){
 	return fd;
 }
 
-/**
- * Sends JSON as FormData. This differs from sendJSON in that this can send files.
- * @param {string} url - The URL where to send the data
- * @param {(object|FormData)} data - The data to be sent.
- * @param {Object} [optionalParams={}] - Desctructured optional parameters.
- * @param {string} [optionalParams.returnType] - If provided, the Promise returned will not be the one returned by the fetch call, but the function of this name on the response. Example values: "json", "text"
- * @param {JavaScriptObject} [optionalParams.otherOptions] - Other fetch options that should be applied.
- * @return {Promise} The resulting Promise from the fetch operation, or from the specified method of its Response.
- */
+/** @deprecated Use superFetch instead. */
+function sendJSON(url,JSONdata,otherOptions=null){
+	let defaultOptions={
+		credentials:'include'
+		,method:'POST'
+		,headers:{'Content-Type':'application/json'}
+		,body:JSON.stringify(JSONdata)
+	};
+	return fetch(url,otherOptions?Object.assign(defaultOptions,otherOptions):defaultOptions);
+}
+
+/** @deprecated Use sendRequest with {format:'POST', credentials:'include', format:returnType}. */
 function sendPOST(url,data,{returnType,otherOptions}={}){
 	if(!(data instanceof FormData))
 		data=JSONAsFormData(data);
@@ -353,13 +378,7 @@ function sendPOST(url,data,{returnType,otherOptions}={}){
 		:f;
 }
 
-/**
- * Just like a regular fetch but with credentials:'include'.
- * @param {string} url - URL to fetch.
- * @param {JavaScriptObject} options - Options to pass to the fetch function.
- * @param {...*} rest - More parameters to pass to the fetch function. Doesn't actually do anything.
- * @returns {Promise} The promise returned from the fetch call.
- */
+/** @deprecated superFetch uses credentials:'include' by default. */
 function fetchConCredentials(url,options={},...rest){
 	options.credentials='include';
 	return fetch(url,options,...rest);
@@ -377,11 +396,12 @@ export {
 	
 	,createElement
 	,addElement
-	
-	,sendJSON
-	,sendPOST
+
+	,superFetch
 	,JSONAsURLEncodedStringIterator
 	,JSONAsFormData
+	,sendJSON
+	,sendPOST
 	,fetchConCredentials
 
 	,W
