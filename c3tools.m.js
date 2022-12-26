@@ -1,3 +1,10 @@
+// TODO @module?
+
+/**
+ * `{}`
+ * @typedef {Object.<string, *>} JavaScriptObject
+ */
+
 //Type checking
 
 /**
@@ -73,16 +80,23 @@ function whatIs(variable){
 
 //DOM querying
 
-const W=window,D=document
-	,ALL=true,ONLY_ONE=false;
+/** @const {Window} */
+const W=window;
+/** @const {Document} */
+const D=document;
 /** @const {HTMLBodyElement} */
 var B;
 addEventListener('DOMContentLoaded',()=>{
 	B=D.body;
 });
 
+// TODO cambiar a Math.Infinity y 1
+const ALL=true;
+const ONLY_ONE=false;
+
 /**
  * Wrapper for getElementById.
+ * @function
  * @param {string} id - id to search for.
  * @returns {?HTMLElement} Matching element or null if none exists.
  */
@@ -91,9 +105,9 @@ const gEt=id=>D.getElementById(id);
 /**
  * Wrapper for querySelector, querySelectorAll, and any other DOM query methods.
  * @param {string} selector - CSS selector to look for.
- * @param {object} [obj]={} - Wrapper
- * @param {(number|boolean)} [obj.n]=ONLY_ONE - Ammount of elements to return, defaults to false (ONLY_ONE).
- * @param {HTMLElement} [obj.from]=D - DOM element on which the query will be done.
+ * @param {Object} [options={}] - Options for the querying.
+ * @param {(number|boolean)} [options.n=ONLY_ONE] - Ammount of elements to return, defaults to false (ONLY_ONE).
+ * @param {HTMLElement} [options.from=D] - DOM element on which the query will be done.
  * @returns {(HTMLElement[]|HTMLElement)} The element or false if cantidad was 1 or false, a NodeList if cantidad was more than 1 or true.
  * @throws {Error} If the selector is not a string.
  */
@@ -150,8 +164,7 @@ function SqS(selector,{n=ONLY_ONE,from=D}={}){
 
 /**
  * An object with the properties that will be applied to the element. It has some special properties that will be handled differently, the rest will just be set through direct property access or the setAttribute method.
- * @typedef ElementRepresentationProperties
- * @type {object}
+ * @typedef {Object} ElementRepresentationProperties
  * @property {string} [class] - A CSS class.
  * @property {string[]} [classList] - A list of CSS classes.
  * @property {(Function|string)} [finalFun] - A function that will be called when the element is created with it as the context.
@@ -163,7 +176,7 @@ function SqS(selector,{n=ONLY_ONE,from=D}={}){
 
 /**
  * Creates Elements from a representation.
- * This function is not supposed to be used alone, but with nested elements inside addElement parameters. However, it comes handy every so often.
+ * This function was made as a result of addElement's recursiveness. However, it comes handy very often.
  * @param {ElementRepresentation} element - A representation of the starting element, can be the name or an existing element. Can also be an array of the 3 parameters, for nesting.
  * @param {(ElementRepresentationProperties|ElementRepresentation)} [options] - Represents the properties to be added to the element. Can also be used to pass an only child, for nesting. Some special values: children; an array of children representations (Existing Elements, arrays of parameters for createElement, even a string of the node name.). class; a single class name as a string. Not incompatible with classList. classList; an array of classes names. finalFun; a function that will be called at the end and has the resulting element as the context. on{event}; can be passed a function (not an arrow one) or a string of the body of the function or the name of the function (looked for in Window).
  * @param {ElementRepresentation} [onlyChild] - If only 1 child will be added, then this parameter is for you. This comes handy in nesting.
@@ -262,8 +275,8 @@ function addElement(parent,...children){
 /**
  * Sends JSON as POST request.
  * @param {string} url - The target URL.
- * @param {object} JSONdata - The request payload.
- * @param {object} otherOptions - Options for the fetch operation.
+ * @param {JavaScriptObject} JSONdata - The request payload.
+ * @param {JavaScriptObject} [otherOptions=null] - Options for the fetch operation.
  * @returns {Promise} The resulting Promise from the fetch operation.
  */
 function sendJSON(url,JSONdata,otherOptions=null){
@@ -278,8 +291,8 @@ function sendJSON(url,JSONdata,otherOptions=null){
 
 /**
  * A recursive iterator that turns a JSON object into URL string key-value pairs.
- * @param {object} obj - The object to parse.
- * @param {string} prefix - The path to this object.
+ * @param {JavaScriptObject} obj - The object to parse.
+ * @param {string} [prefix=null] - The path to this object.
  * @yields {[string, (string|boolean|number)]} Key-value pair.
  */
 function* JSONAsURLEncodedStringIterator(obj,prefix=null){
@@ -296,7 +309,7 @@ function* JSONAsURLEncodedStringIterator(obj,prefix=null){
 
 /**
  * Turns a regular object into a FormData object.
- * @param {(Array|object)} obj - Original object.
+ * @param {(Array|JavaScriptObject)} obj - Original object.
  * @returns {FormData} The data as a FormData.
  * @throws {Error} If obj is not valid.
  */
@@ -319,9 +332,10 @@ function JSONAsFormData(obj){
  * Sends JSON as FormData. This differs from sendJSON in that this can send files.
  * @param {string} url - The URL where to send the data
  * @param {(object|FormData)} data - The data to be sent.
- * @param {string} [returnType=undefined] - If provided, the Promise returned will not be the one returned by the fetch call, but the function of this name on the response. Example values: "json", "text"
- * @param {object} [otherOptions=undefined] - Other fetch options that should be applied.
- * @return {Promise} The Promise of the fetch request or its response.
+ * @param {Object} [optionalParams={}] - Desctructured optional parameters.
+ * @param {string} [optionalParams.returnType] - If provided, the Promise returned will not be the one returned by the fetch call, but the function of this name on the response. Example values: "json", "text"
+ * @param {JavaScriptObject} [optionalParams.otherOptions] - Other fetch options that should be applied.
+ * @return {Promise} The resulting Promise from the fetch operation, or from the specified method of its Response.
  */
 function sendPOST(url,data,{returnType,otherOptions}={}){
 	if(!(data instanceof FormData))
@@ -344,8 +358,8 @@ function sendPOST(url,data,{returnType,otherOptions}={}){
 /**
  * Just like a regular fetch but with credentials:'include'.
  * @param {string} url - URL to fetch.
- * @param {object} options - Options to pass to the fetch function.
- * @param  {...*} rest - More parameters to pass to the fetch function.
+ * @param {JavaScriptObject} options - Options to pass to the fetch function.
+ * @param {...*} rest - More parameters to pass to the fetch function. Doesn't actually do anything.
  * @returns {Promise} The promise returned from the fetch call.
  */
 function fetchConCredentials(url,options={},...rest){
