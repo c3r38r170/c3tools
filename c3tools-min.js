@@ -1,1 +1,1 @@
-import*as c3 from"./c3tools.m.js";for(let o in c3)window[o]=c3[o];
+import*as c3 from"./c3tools-min.m.js";for(let o in c3)window[o]=c3[o];
