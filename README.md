@@ -7,11 +7,11 @@ Specifying a version is recommended. [More info about unpkg.](https://unpkg.com/
 
 By default, `c3tools-min.js` will be loaded (non-module version). You must specify `/c3tools-min.m.js` after the version, for the module version:
 
-`<script src="https://unpkg.com/@c3r38r170/c3tools@1.0.0/c3tools-min.m.js" type="module"></script>`
+`<script src="https://unpkg.com/@c3r38r170/c3tools@1.1.0/c3tools-min.m.js" type="module"></script>`
 
-## Features:
+## Main Features:
 
-### SuperQuerySelector (SqS)
+### SuperQuerySelector ([SqS](../../wiki/DOM-querying#sqsselector--nonly_one-fromd-))
 
 One `Element` selecting method to rule them all. Encapsulates all `getElement...` methods, `querySelector` and `querySelectorAll`, and uses the apropriate one depending on the selector.
 
@@ -23,7 +23,7 @@ SqS('button',{from:gEt('modal')}); // Actually uses from.getElementsByTagName. R
 SqS('#id span, #id b',{n:true}); // Actually uses querySelectorAll. Returns all results.
 ```
 
-### DOM building using JS objects
+### [DOM building](../../wiki/DOM-elements-generators) using JS objects
 <table>
 <tr>
 <td> c3tools </td> <td> Resulting HTML </td>
@@ -67,17 +67,15 @@ createElement('DIV',{
 
 This is the main point of the library, so it has some interesting stuff you may want to check out in the wiki.
 
-### Fetching utilities.
+### [superFetch](../../wiki/Fetching#superfetchurl-data--methodget--format--credentialsinclude-)
 
-You got `sendPOST` and `sendJSON`, they work as wrappers around `fetch` (same response type ... for now). There's also some internal utilities and finally a soon-to-be-deprecated function called `fetchConCredentials`.
+A very simple and fun to use wrapper around fetch.
 
-This is being reworked soon. Ideally there'll be a very cool `sendJSON` function and that'll be it.
-
-### Type-checking module
+### [Type-checking](../../wiki/Type-checking) module
 
 An enumeration of data types called `Types`, and a couple fine functions:
 - `is(smt:any,type:Types):boolean`
-- `whatIs(smt:any):Types`; 
+- `whatIs(smt:any):Types`
 
 This is actually for internal use, but is available anyways.
 
@@ -87,7 +85,7 @@ This is actually for internal use, but is available anyways.
 - Better README.
 - The "Soon!" stuff.
 
-## Soon!
+## [Soon!](../../projects?type=classic)
 `download` function.
 
 Group functions and variables in logical modules.
