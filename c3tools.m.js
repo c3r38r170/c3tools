@@ -397,18 +397,6 @@ const DOMQuerying={
 	,B
 };
 
-const Shortcuts={
-	W
-	,D
-	,B
-}
-
-const TypeChecking={
-	Types
-	,is
-	,whatIs
-};
-
 const DOMGenerators={
 	createElement
 	,addElement
@@ -423,29 +411,40 @@ const Fetching={
 	,fetchConCredentials
 };
 
+const Shortcuts={
+	W
+	,D
+	,B
+}
+
+const TypeChecking={
+	Types
+	,is
+	,whatIs
+};
+
+const c3tools={
+	DOMQuerying
+	,DOMGenerators
+	,Fetching
+	,Shortcuts
+	,TypeChecking
+};
+
 // Export
 
 export {
 
-	DOMQuerying
+	c3tools
+
+	
+	,DOMQuerying
 
 	,SqS
 	,gEt
 	,ALL
 	,ONLY_ONE
 
-	,Shortcuts
-
-	,W
-	,D
-	,B
-	
-	,TypeChecking
-
-	,Types
-	,is
-	,whatIs
-	
 	,DOMGenerators
 
 	,createElement
@@ -460,4 +459,16 @@ export {
 	,sendPOST
 	,fetchConCredentials
 
+	,Shortcuts
+
+	,W
+	,D
+	,B
+	
+	,TypeChecking
+
+	,Types
+	,is
+	,whatIs
+	
 }
