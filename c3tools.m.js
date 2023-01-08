@@ -5,7 +5,7 @@
  * @typedef {Object.<string, *>} JavaScriptObject
  */
 
-//Type checking
+// Type checking
 
 /**
  * Enum for types of variables.
@@ -78,7 +78,7 @@ function whatIs(variable){
 	}
 }
 
-//DOM querying
+// DOM querying
 
 /** @const {Window} */
 const W=window;
@@ -150,7 +150,7 @@ function SqS(selector,{n=ONLY_ONE,from=D}={}){
 	}else throw new Error('The selector must be a string.');
 }
 
-//DOM elements generators
+// DOM elements generators
 
 /**
  * @typedef {(string|HTMLElement|DocumentFragment)} SimpleElementRepresentation The element representation values that aren't an array.
@@ -250,6 +250,7 @@ function createElement(element,options,onlyChild){
 	return element;
 }
 
+// TODO addElements
 /**
  * Adds the elements resulting from the children to the specified parent element.
  * @param {HTMLElement} parent - The element where all children will be appended.
@@ -268,7 +269,7 @@ function addElement(parent,...children){
 	return results.length>1?results:results[0];
 }
 
-//Fetching
+// Fetching
 
 /**
  * A simple, not compound value.
@@ -384,18 +385,73 @@ function fetchConCredentials(url,options={},...rest){
 	return fetch(url,options,...rest);
 }
 
-export {
+// Logical modules
+
+const DOMQuerying={
 	SqS
 	,gEt
 	,ALL
 	,ONLY_ONE
+	,W
+	,D
+	,B
+};
+
+const Shortcuts={
+	W
+	,D
+	,B
+}
+
+const TypeChecking={
+	Types
+	,is
+	,whatIs
+};
+
+const DOMGenerators={
+	createElement
+	,addElement
+};
+
+const Fetching={
+	superFetch
+	,JSONAsURLEncodedStringIterator
+	,JSONAsFormData
+	,sendJSON
+	,sendPOST
+	,fetchConCredentials
+};
+
+// Export
+
+export {
+
+	DOMQuerying
+
+	,SqS
+	,gEt
+	,ALL
+	,ONLY_ONE
+
+	,Shortcuts
+
+	,W
+	,D
+	,B
 	
+	,TypeChecking
+
 	,Types
 	,is
 	,whatIs
 	
+	,DOMGenerators
+
 	,createElement
 	,addElement
+
+	,Fetching
 
 	,superFetch
 	,JSONAsURLEncodedStringIterator
@@ -404,7 +460,4 @@ export {
 	,sendPOST
 	,fetchConCredentials
 
-	,W
-	,D
-	,B
 }
